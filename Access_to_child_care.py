@@ -17,10 +17,7 @@ df['low_access'] = (
 )
 
 # Filter the rows where CMAUID is 535. This is representing the GTA.
-df_gta_low_access = df[
-    (df['CMAUID'] == 535) & 
-    (df['low_access'] == True)
-]
+df_gta_low_access = df[(df['CMAUID'] == 535)]
 
 
 # Here we're visualizing the data based on a true and false system. 
@@ -60,6 +57,6 @@ plt.grid(True)
 plt.show()
 
 # Count number of low and non-low access neighborhoods for CMAUID 535
-low_access_counts_535 = df_gta_low_access,['low_access'].value_counts()
+low_access_counts_535 = df_gta_low_access['low_access'].value_counts()
 print("\nLow Access Counts for CMAUID = 535:")
 print(low_access_counts_535)
