@@ -1,44 +1,29 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Load the immigration profile data
-profile_df = pd.read_excel("ADA_profile_simplified.xlsx", engine="openpyxl")
-# Load accessibility data
-access_df = pd.read_excel("ADA_acs_file.xlsx", sheet_name="acs_ada_file")
+# Loading the datasets
+acs_df = pd.read_excel("ADA_acs_file.xlsx", sheet_name=0)
+profile_df = pd.read_csv("ADA_profile_simplified(csv).csv")
 
-# Define thresholds
-public_ef_threshold = 0.5
-walk_ef_threshold = 0.5
+# Merge on CMAUID. This would help us get the values that have 535 area code.
+merged = pd.merge(acs_df, profile_df, on="CMAUID", how="inner")
 
-# Define "has access" (access via transit or walking)
-access_df["has_access"] = (
-    (access_df["public_ef"] > public_ef_threshold) | 
-    (access_df["walk_ef"] > walk_ef_threshold)
-)
+# Filter to GTA (CMAUID = 535)
+gta = merged[merged["CMAUID"] == 535]
 
-# Merge on DAUID (update this key if needed)
-merged_df = profile_df.merge(access_df, on="DAUID", how="inner")
+# Get population counts. We are splitting it up between immigrants and non_immigrants.
+immigrants = gta["T1529"].sum()
+non_immigrants = gta["T1528"].sum()
 
-# Filter immigrant and non-immigrant groups
-immigrant_df = merged_df[merged_df["Characteristic"].str.contains("Immigrants", case=False, na=False)]
-non_immigrant_df = merged_df[merged_df["Characteristic"].str.contains("Non-immigrants", case=False, na=False)]
+# Here we're creating the pie chart.
+labels = ['Immigrants', 'Canadian-born']
+sizes = [immigrants, non_immigrants]
+colors = ['#007acc', '#f5a623']
 
-# Calculate access rates
-immigrant_access_pct = immigrant_df["has_access"].mean() * 100
-non_immigrant_access_pct = non_immigrant_df["has_access"].mean() * 100
-
-# Print results
-print(f"Immigrant families with access: {immigrant_access_pct:.2f}%")
-print(f"Non-immigrant families with access: {non_immigrant_access_pct:.2f}%")
-
-# Scatter Plot
-plt.figure(figsize=(8, 5))
-plt.scatter(["Immigrants"], [immigrant_access_pct], color='green', s=100, label="Immigrants")
-plt.scatter(["Non-immigrants"], [non_immigrant_access_pct], color='blue', s=100, label="Non-immigrants")
-
-plt.title("Scatter Plot of Childcare Access (%)")
-plt.ylabel("Percentage with Access")
-plt.ylim(0, 100)
-plt.grid(axis='y', linestyle='--', alpha=0.7)
-plt.legend()
+# Here we are creating the plotting the pie chart and creating any necessary labels.
+plt.figure(figsize=(6, 6))
+plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, colors=colors)
+plt.title('Chart 1: % of Immigrant vs. Canadian-born Families in the GTA (CMA 535)')
+plt.axis('equal')  # Equal aspect ratio ensures pie is circular
+plt.tight_layout()
 plt.show()
