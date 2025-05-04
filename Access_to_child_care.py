@@ -7,8 +7,8 @@ df = pd.read_excel("ADA_acs_file.xlsx", sheet_name="acs_ada_file")
 
 # These are thresholds that we used to decide if someone 
 # has good access to the child care via walking or using transit
-public_ef_threshold = 0.4
-walk_ef_threshold = 0.4
+public_ef_threshold = 0.5
+walk_ef_threshold = 0.5
 
 # Here we filtering out the data based on the threshold.
 df['low_access'] = (
@@ -51,7 +51,7 @@ for i, (label, count) in enumerate(low_access_counts_535.items()):
 plt.title("Access to Child Care Services in the Greater Toronto Area.")
 plt.xlabel("Access via Public Transit")
 plt.ylabel("Access via Walking")
-plt.legend(title="Low Access (< 0.4)")
+plt.legend(title="Low Access (< 0.5)")
 plt.grid(True)
 plt.show()
 
