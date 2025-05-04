@@ -32,8 +32,23 @@ sns.scatterplot(
     alpha=0.6
 )
 
+# This is used to count categories
+low_access_counts_535 = df_gta['low_access'].value_counts()
+
+# This is used to present the amount of data points have/have not any access.
+for i, (label, count) in enumerate(low_access_counts_535.items()):
+    label_text = "Low Access" if label else "Not Low Access"
+    plt.text(
+        0.05,
+        0.95 - i * 0.05,
+        f"{label_text}: {count}",
+        transform=plt.gca().transAxes,
+        fontsize=12,
+        color='black'
+    )
+
 # Here we're setting the chart's characteristics.
-plt.title("Access to Child Care Services (Thresholds -> 0.4)")
+plt.title("Access to Child Care Services in the Greater Toronto Area.")
 plt.xlabel("Access via Public Transit")
 plt.ylabel("Access via Walking")
 plt.legend(title="Low Access (< 0.4)")
